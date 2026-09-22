@@ -41,10 +41,26 @@ or your ship.
 | `1`–`7` or toolbar | select a block |
 | left click / drag | build (dragging a conveyor paints a path that turns with the cursor) |
 | right click / drag | deconstruct, full refund |
-| `R` | rotate conveyor |
+| `R` or the ↻ Rotate tile | rotate conveyor |
+| `X` or the ✕ Remove tile | remove mode: click or drag over blocks to deconstruct |
 | `Q` / `Esc` | deselect |
 | `N` | call the next wave now |
 | `P` | pause, `H` help, mouse wheel zoom |
+
+### Touch (phones and tablets)
+
+The page detects a touch screen and switches to a phone layout: a virtual joystick at the bottom left flies
+the ship, the toolbar scrolls horizontally, and the `?`, `II` and `⛶` buttons replace the help, pause and
+fullscreen keys.
+
+| Gesture | Action |
+| --- | --- |
+| drag the joystick | fly the ship |
+| tap a toolbar tile, then tap the map | build |
+| drag on the map with a block selected | paint a line (belts turn with your finger) |
+| ✕ Remove, then tap or drag over blocks | deconstruct, full refund |
+| pinch | zoom |
+| tap the selected tile again | deselect |
 
 ## Blocks and units
 
@@ -79,7 +95,7 @@ Plain ES2020, HTML5 canvas, classic `<script>` tags so it runs from `file://`.
 | `src/entities.js` | player ship, enemies, bullets |
 | `src/game.js` | world state, placement rules, waves, fixed-step update |
 | `src/render.js` | camera and all drawing; terrain is cached to an offscreen canvas |
-| `src/input.js` | keyboard, mouse, drag-to-build |
+| `src/input.js` | keyboard, mouse and touch via Pointer Events, drag-to-build, joystick, pinch zoom |
 | `src/ui.js` | DOM HUD, toolbar, overlays |
 | `src/main.js` | bootstrap and game loop, exposes `window.AIndustry` for scripting |
 

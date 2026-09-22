@@ -10,6 +10,12 @@ class UI {
       skip: document.getElementById('skip-wave'),
     };
     this.el.skip.addEventListener('click', () => { const g = this.getGame(); if (!g.over) g.nextWave(); });
+    document.getElementById('btn-help').addEventListener('click', () => this.showHelp());
+    document.getElementById('btn-pause').addEventListener('click', () => { const g = this.getGame(); if (!g.over) g.paused = !g.paused; });
+    document.getElementById('btn-full').addEventListener('click', () => {
+      const d = document.documentElement;
+      try { if (document.fullscreenElement) document.exitFullscreen(); else (d.requestFullscreen || d.webkitRequestFullscreen).call(d); } catch (e) { /* not supported (iOS Safari) */ }
+    });
     this.el.overlay.addEventListener('click', () => this.dismissOverlay());
     this.buildToolbar();
   }
@@ -23,17 +29,27 @@ class UI {
       const el = document.createElement('div');
       el.className = 'tool'; el.dataset.type = type;
       el.innerHTML = `<div class="key">${i + 1}</div><div class="name">${d.name}</div><div class="cost">${this.costHtml(d.cost)}</div>`;
-      el.addEventListener('mousedown', (e) => { e.preventDefault(); this.input.select(type); });
+      el.addEventListener('pointerdown', (e) => { e.preventDefault(); this.input.select(type); });
       el.addEventListener('mouseenter', () => { this.hoverType = type; });
       el.addEventListener('mouseleave', () => { this.hoverType = null; });
       this.el.toolbar.appendChild(el);
     });
+    const util = (type, key, name, sub, onTap) => {
+      const el = document.createElement('div');
+      el.className = 'tool util'; el.dataset.type = type;
+      el.innerHTML = `<div class="key">${key}</div><div class="name">${name}</div><div class="cost">${sub}</div>`;
+      el.addEventListener('pointerdown', (e) => { e.preventDefault(); onTap(); });
+      this.el.toolbar.appendChild(el);
+    };
+    util('rotate', 'R', '↻ Rotate', 'conveyors', () => this.input.rotate());
+    util('remove', 'X', '✕ Remove', 'refunds', () => this.input.select('remove'));
   }
   refreshToolbar() {
     const g = this.getGame();
     for (const el of this.el.toolbar.children) {
       el.classList.toggle('selected', el.dataset.type === this.input.selected);
-      el.classList.toggle('poor', !g.core.has(BLOCKS[el.dataset.type].cost));
+      const def = BLOCKS[el.dataset.type];
+      el.classList.toggle('poor', !!def && !g.core.has(def.cost));
     }
   }
   update() {
@@ -47,12 +63,16 @@ class UI {
     this.refreshToolbar();
 
     const type = this.hoverType || inp.selected;
-    if (type) {
+    if (type === 'remove') {
+      this.el.info.textContent = 'Remove: tap or drag over blocks to deconstruct them (full refund).';
+    } else if (type) {
       const d = BLOCKS[type];
       this.el.info.textContent = `${d.name}: ${d.desc}${d.rotates ? ' Press R to rotate.' : ''}${d.range ? ` Range ${d.range} tiles.` : ''}`;
     } else {
       const b = g.map.buildingAt(inp.tileX, inp.tileY);
-      this.el.info.textContent = b ? `${b.def.name} · ${Math.ceil(b.hp)}/${b.maxHp} hp · ${b.status()}` : 'Pick a block (1–7) and click on the map. Right-click removes and refunds. WASD moves your ship.';
+      this.el.info.textContent = b ? `${b.def.name} · ${Math.ceil(b.hp)}/${b.maxHp} hp · ${b.status()}`
+        : inp.touch ? 'Pick a block below, then tap or drag on the map. Joystick moves your ship.'
+        : 'Pick a block (1–7) and click on the map. Right-click removes and refunds. WASD moves your ship.';
     }
     if (g.over && !this.overlayOpen) this.showGameOver();
   }
@@ -75,12 +95,17 @@ class UI {
         <li><b>Smelter</b> turns 2 copper + 1 lead into alloy. Alloy unlocks the <b>Hail</b> artillery.</li>
       </ul>
       <h2>Controls</h2>
-      <ul>
+      ${this.input && this.input.touch ? `<ul>
+        <li><b>Joystick</b> (bottom left) flies your ship. It auto-shoots. You can only build near it.</li>
+        <li>Pick a block in the bar, then <b>tap</b> the map to build or <b>drag</b> to paint a line. Belts turn with your finger.</li>
+        <li><b>↻ Rotate</b> turns the next conveyor · <b>✕ Remove</b> then tap blocks to refund them · tap the selected block again to deselect.</li>
+        <li><b>Pinch</b> to zoom · <b>?</b> help · <b>II</b> pause · <b>⛶</b> fullscreen.</li>
+      </ul>` : `<ul>
         <li><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> fly your ship (it auto-shoots). You can only build near it.</li>
-        <li><kbd>1</kbd>–<kbd>7</kbd> pick a block · <kbd>R</kbd> rotate · left-click / drag to build · right-click to remove (full refund) · <kbd>Q</kbd> deselect</li>
+        <li><kbd>1</kbd>–<kbd>7</kbd> pick a block · <kbd>R</kbd> rotate · left-click / drag to build · right-click or <kbd>X</kbd> tool to remove (full refund) · <kbd>Q</kbd> deselect</li>
         <li><kbd>N</kbd> call the next wave early · <kbd>P</kbd> pause · <kbd>H</kbd> this help · mouse wheel zoom</li>
-      </ul>
-      <div class="cta">Click or press any key to play.</div>`);
+      </ul>`}
+      <div class="cta">${this.input && this.input.touch ? 'Tap' : 'Click or press any key'} to play.</div>`);
   }
   showGameOver() {
     const g = this.getGame();

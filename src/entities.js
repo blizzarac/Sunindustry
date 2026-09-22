@@ -14,13 +14,8 @@ class Player {
       if (this.respawn <= 0) { this.dead = false; this.hp = this.maxHp; this.x = g.core.cx; this.y = g.core.cy + 2.5; }
       return;
     }
-    let mx = 0, my = 0;
-    if (input.isDown('KeyW') || input.isDown('ArrowUp')) my -= 1;
-    if (input.isDown('KeyS') || input.isDown('ArrowDown')) my += 1;
-    if (input.isDown('KeyA') || input.isDown('ArrowLeft')) mx -= 1;
-    if (input.isDown('KeyD') || input.isDown('ArrowRight')) mx += 1;
-    const len = Math.hypot(mx, my) || 1;
-    this.vx = (mx / len) * PLAYER_DEF.speed; this.vy = (my / len) * PLAYER_DEF.speed;
+    const [mx, my] = input.moveVector();
+    this.vx = mx * PLAYER_DEF.speed; this.vy = my * PLAYER_DEF.speed;
     this.x = clamp(this.x + this.vx * dt, 1, g.map.w - 1);
     this.y = clamp(this.y + this.vy * dt, 1, g.map.h - 1);
     if (mx || my) this.angle = Math.atan2(my, mx);

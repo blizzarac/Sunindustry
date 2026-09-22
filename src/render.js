@@ -190,6 +190,11 @@ class Renderer {
   drawGhost(game, input) {
     const ctx = this.ctx, type = input.selected;
     if (!type) return;
+    if (type === 'remove') {
+      const b = game.map.buildingAt(input.tileX, input.tileY);
+      if (b && b.type !== 'core') { ctx.strokeStyle = '#ff5252'; ctx.lineWidth = 3; ctx.strokeRect(b.x * TILE + 2, b.y * TILE + 2, b.size * TILE - 4, b.size * TILE - 4); }
+      return;
+    }
     const p = game.player;
     // Build range ring.
     ctx.strokeStyle = 'rgba(143,225,255,0.25)'; ctx.lineWidth = 2; ctx.setLineDash([8, 8]);

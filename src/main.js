@@ -7,10 +7,12 @@
   const ui = new UI(getGame);
   const input = new Input(canvas, renderer, getGame, ui);
   ui.input = input;
+  if (input.touch) ui.el.skip.textContent = 'Next wave';
 
   function newGame(seed) {
     game = new Game(seed ?? (Math.random() * 1e9) | 0);
     renderer.cam.x = game.player.x * TILE; renderer.cam.y = game.player.y * TILE;
+    renderer.cam.zoom = Math.min(window.innerWidth, window.innerHeight) < 600 ? 0.8 : 1;
     input.selected = null; input.rot = 0;
     ui.refreshToolbar();
   }

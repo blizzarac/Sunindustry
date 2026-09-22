@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>A-Industry — gameplay POC</title>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -25,12 +28,15 @@
   <div id="top-right" class="panel">
     <div id="stats"></div>
     <div class="hint">H help · P pause · wheel zoom</div>
+    <div class="btn-row"><button id="btn-help" title="Help (H)">?</button><button id="btn-pause" title="Pause (P)">II</button><button id="btn-full" title="Fullscreen">⛶</button></div>
   </div>
 
   <div id="bottom" class="panel">
     <div id="toolbar"></div>
     <div id="block-info">Pick a block (1–7), then click on the map. Right-click removes.</div>
   </div>
+
+  <div id="joystick"><div id="joy-knob"></div></div>
 
   <div id="overlay" class="hidden">
     <div id="overlay-content"></div>
