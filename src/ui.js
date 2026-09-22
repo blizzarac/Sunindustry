@@ -12,6 +12,7 @@ class UI {
     this.el.skip.addEventListener('click', () => { const g = this.getGame(); if (!g.over) g.nextWave(); });
     document.getElementById('btn-help').addEventListener('click', () => this.showHelp());
     document.getElementById('btn-pause').addEventListener('click', () => { const g = this.getGame(); if (!g.over) g.paused = !g.paused; });
+    document.getElementById('btn-locate').addEventListener('click', () => this.input.centerOnShip());
     document.getElementById('btn-full').addEventListener('click', () => {
       const d = document.documentElement;
       try { if (document.fullscreenElement) document.exitFullscreen(); else (d.requestFullscreen || d.webkitRequestFullscreen).call(d); } catch (e) { /* not supported (iOS Safari) */ }
@@ -54,7 +55,7 @@ class UI {
   }
   update() {
     const g = this.getGame(), inp = this.input;
-    this.el.resources.innerHTML = ITEM_LIST.map((k) => `<div class="res"><span class="dot" style="background:${ITEMS[k].color}"></span>${ITEMS[k].name}<span class="n">${g.core.inv[k] | 0}</span></div>`).join('');
+    this.el.resources.innerHTML = ITEM_LIST.map((k) => `<div class="res" title="${ITEMS[k].name}"><span class="dot" style="background:${ITEMS[k].color}"></span><span class="nm">${ITEMS[k].name}</span><span class="n">${g.core.inv[k] | 0}</span></div>`).join('');
     const alive = g.enemies.length + g.spawnQueue.length;
     this.el.waveText.textContent = g.over ? 'CORE DESTROYED' : `Wave ${g.wave + 1} in ${Math.ceil(g.waveTimer)}s${g.paused ? ' · PAUSED' : ''}`;
     this.el.waveSub.textContent = alive ? `${alive} enemies alive` : g.wave ? `wave ${g.wave} cleared` : 'build up your defenses';
@@ -63,7 +64,9 @@ class UI {
     this.refreshToolbar();
 
     const type = this.hoverType || inp.selected;
-    if (type === 'remove') {
+    if (this.flashText && performance.now() < this.flashUntil) {
+      this.el.info.textContent = this.flashText;
+    } else if (type === 'remove') {
       this.el.info.textContent = 'Remove: tap or drag over blocks to deconstruct them (full refund).';
     } else if (type) {
       const d = BLOCKS[type];
@@ -71,11 +74,12 @@ class UI {
     } else {
       const b = g.map.buildingAt(inp.tileX, inp.tileY);
       this.el.info.textContent = b ? `${b.def.name} · ${Math.ceil(b.hp)}/${b.maxHp} hp · ${b.status()}`
-        : inp.touch ? 'Pick a block below, then tap or drag on the map. Joystick moves your ship.'
+        : inp.touch ? 'Tap the ground to fly there. Pick a block below and tap to build; hold and drag for a line.'
         : 'Pick a block (1–7) and click on the map. Right-click removes and refunds. WASD moves your ship.';
     }
     if (g.over && !this.overlayOpen) this.showGameOver();
   }
+  flash(text) { this.flashText = text; this.flashUntil = performance.now() + 1500; }
   showOverlay(html) { this.el.overlayContent.innerHTML = html; this.el.overlay.classList.remove('hidden'); this.overlayOpen = true; this.getGame().paused = true; }
   dismissOverlay() {
     if (!this.overlayOpen) return;
@@ -96,10 +100,11 @@ class UI {
       </ul>
       <h2>Controls</h2>
       ${this.input && this.input.touch ? `<ul>
-        <li><b>Joystick</b> (bottom left) flies your ship. It auto-shoots. You can only build near it.</li>
-        <li>Pick a block in the bar, then <b>tap</b> the map to build or <b>drag</b> to paint a line. Belts turn with your finger.</li>
+        <li><b>Drag</b> to move the camera, <b>pinch</b> to zoom. <b>Tap</b> the ground and your ship flies there. It auto-shoots.</li>
+        <li>Pick a block in the bar, then <b>tap</b> the map to build. <b>Hold</b> a moment and <b>drag</b> to paint a line. Belts turn with your finger.</li>
+        <li>You can only build near your ship. If a spot is too far, the ship flies over: tap again when it arrives.</li>
         <li><b>↻ Rotate</b> turns the next conveyor · <b>✕ Remove</b> then tap blocks to refund them · tap the selected block again to deselect.</li>
-        <li><b>Pinch</b> to zoom · <b>?</b> help · <b>II</b> pause · <b>⛶</b> fullscreen.</li>
+        <li><b>?</b> help · <b>II</b> pause · <b>⛶</b> fullscreen · <b>⌖</b> find your ship.</li>
       </ul>` : `<ul>
         <li><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> fly your ship (it auto-shoots). You can only build near it.</li>
         <li><kbd>1</kbd>–<kbd>7</kbd> pick a block · <kbd>R</kbd> rotate · left-click / drag to build · right-click or <kbd>X</kbd> tool to remove (full refund) · <kbd>Q</kbd> deselect</li>

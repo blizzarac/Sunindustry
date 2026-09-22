@@ -14,7 +14,12 @@ class Player {
       if (this.respawn <= 0) { this.dead = false; this.hp = this.maxHp; this.x = g.core.cx; this.y = g.core.cy + 2.5; }
       return;
     }
-    const [mx, my] = input.moveVector();
+    let [mx, my] = input.moveVector();
+    if (!mx && !my && input.moveTarget) { // touch: fly to the tapped tile
+      const [tx, ty] = input.moveTarget, dx = tx - this.x, dy = ty - this.y, dd = Math.hypot(dx, dy);
+      if (dd < 0.15) input.moveTarget = null;
+      else { const k = Math.min(1, dd / (PLAYER_DEF.speed * dt)); mx = (dx / dd) * k; my = (dy / dd) * k; }
+    }
     this.vx = mx * PLAYER_DEF.speed; this.vy = my * PLAYER_DEF.speed;
     this.x = clamp(this.x + this.vx * dt, 1, g.map.w - 1);
     this.y = clamp(this.y + this.vy * dt, 1, g.map.h - 1);

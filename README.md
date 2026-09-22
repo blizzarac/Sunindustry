@@ -49,17 +49,18 @@ or your ship.
 
 ### Touch (phones and tablets)
 
-The page detects a touch screen and switches to a phone layout: a virtual joystick at the bottom left flies
-the ship, the toolbar scrolls horizontally, and the `?`, `II` and `⛶` buttons replace the help, pause and
-fullscreen keys.
+The page detects a touch screen and switches to Mindustry's mobile scheme: the camera is free, the ship
+flies where you tap, and building is tap or long-press-and-drag. The toolbar scrolls horizontally and the
+`?`, `II`, `⛶` and `⌖` buttons replace the help, pause, fullscreen and "find my ship" keys.
 
 | Gesture | Action |
 | --- | --- |
-| drag the joystick | fly the ship |
-| tap a toolbar tile, then tap the map | build |
-| drag on the map with a block selected | paint a line (belts turn with your finger) |
-| ✕ Remove, then tap or drag over blocks | deconstruct, full refund |
+| drag | pan the camera |
 | pinch | zoom |
+| tap empty ground | the ship flies there |
+| tap a toolbar tile, then tap the map | build (if it is too far, the ship flies over; tap again when it arrives) |
+| hold, then drag, with a block selected | paint a line (belts turn with your finger) |
+| ✕ Remove, then tap or hold-and-drag over blocks | deconstruct, full refund |
 | tap the selected tile again | deselect |
 
 ## Blocks and units
@@ -95,7 +96,7 @@ Plain ES2020, HTML5 canvas, classic `<script>` tags so it runs from `file://`.
 | `src/entities.js` | player ship, enemies, bullets |
 | `src/game.js` | world state, placement rules, waves, fixed-step update |
 | `src/render.js` | camera and all drawing; terrain is cached to an offscreen canvas |
-| `src/input.js` | keyboard, mouse and touch via Pointer Events, drag-to-build, joystick, pinch zoom |
+| `src/input.js` | keyboard, mouse and touch via Pointer Events: drag-to-build, camera pan, tap-to-move, long-press lines, pinch zoom |
 | `src/ui.js` | DOM HUD, toolbar, overlays |
 | `src/main.js` | bootstrap and game loop, exposes `window.AIndustry` for scripting |
 

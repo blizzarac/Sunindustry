@@ -51,7 +51,7 @@ class Renderer {
 
     // Camera follows the player.
     const p = game.player;
-    cam.x = lerp(cam.x, p.x * TILE, 0.12); cam.y = lerp(cam.y, p.y * TILE, 0.12);
+    if (!input.touch) { cam.x = lerp(cam.x, p.x * TILE, 0.12); cam.y = lerp(cam.y, p.y * TILE, 0.12); }
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.fillStyle = '#0d1015'; ctx.fillRect(0, 0, W, H);
@@ -79,6 +79,13 @@ class Renderer {
       ctx.globalAlpha = t; ctx.fillStyle = f.color;
       ctx.beginPath(); ctx.arc(f.x * TILE, f.y * TILE, f.r * TILE * (1.3 - t * 0.5), 0, Math.PI * 2); ctx.fill();
       ctx.globalAlpha = 1;
+    }
+    if (input.moveTarget && !game.player.dead) {
+      const [tx, ty] = input.moveTarget;
+      ctx.strokeStyle = 'rgba(143,225,255,0.8)'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(tx * TILE, ty * TILE, 8 + Math.sin(game.time * 8) * 2, 0, Math.PI * 2); ctx.stroke();
+      ctx.setLineDash([6, 6]); ctx.strokeStyle = 'rgba(143,225,255,0.35)';
+      ctx.beginPath(); ctx.moveTo(game.player.x * TILE, game.player.y * TILE); ctx.lineTo(tx * TILE, ty * TILE); ctx.stroke(); ctx.setLineDash([]);
     }
     this.drawGhost(game, input);
     this.drawHover(game, input, ui);
@@ -212,7 +219,7 @@ class Renderer {
       ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = 1.5;
       ctx.beginPath(); ctx.arc(px + s / 2, py + s / 2, def.range * TILE, 0, Math.PI * 2); ctx.stroke();
     }
-    if (!check.ok) {
+    if (!check.ok && !input.touch) {
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.font = '13px system-ui, sans-serif'; ctx.fillStyle = '#ff8080'; ctx.textAlign = 'left';
       ctx.fillText(check.reason, input.mouseX + 14, input.mouseY - 10);
