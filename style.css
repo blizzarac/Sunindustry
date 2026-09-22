@@ -1,0 +1,39 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #0d1015; font-family: "Segoe UI", system-ui, sans-serif; color: #e6e9ee; }
+#game { position: fixed; inset: 0; display: block; cursor: crosshair; }
+#hud { position: fixed; inset: 0; pointer-events: none; }
+.panel { position: absolute; pointer-events: auto; background: rgba(14, 18, 26, 0.82); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 8px 10px; font-size: 13px; backdrop-filter: blur(2px); }
+.panel-title { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.6; margin-bottom: 4px; }
+#top-left { top: 10px; left: 10px; min-width: 150px; }
+#top-center { top: 10px; left: 50%; transform: translateX(-50%); min-width: 260px; text-align: center; }
+#top-right { top: 10px; right: 10px; text-align: right; }
+#bottom { bottom: 10px; left: 50%; transform: translateX(-50%); max-width: calc(100vw - 20px); }
+.hint { opacity: 0.55; font-size: 11px; margin-top: 4px; }
+#wave-text { font-weight: 600; font-size: 15px; }
+#wave-sub { opacity: 0.7; font-size: 12px; margin-top: 2px; }
+#stats { font-variant-numeric: tabular-nums; }
+.bar { height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin: 6px 0 2px; overflow: hidden; }
+.bar-fill { height: 100%; width: 100%; background: #ffd37f; transition: width 0.15s linear; }
+button { font: inherit; font-size: 12px; background: #1d2633; color: #e6e9ee; border: 1px solid rgba(255,255,255,0.12); border-radius: 4px; padding: 4px 8px; cursor: pointer; margin-top: 6px; }
+button:hover { background: #2a3648; }
+.res { display: flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; line-height: 1.5; }
+.res .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.res .n { margin-left: auto; padding-left: 12px; }
+#toolbar { display: flex; gap: 6px; flex-wrap: nowrap; justify-content: center; }
+.tool { width: 86px; padding: 6px 4px; background: #161c26; border: 1px solid rgba(255,255,255,0.1); border-radius: 5px; cursor: pointer; text-align: center; user-select: none; }
+.tool:hover { background: #222c3b; }
+.tool.selected { border-color: #ffd37f; background: #2b2a1f; }
+.tool.poor { opacity: 0.55; }
+.tool .key { font-size: 10px; opacity: 0.55; }
+.tool .name { font-size: 12px; font-weight: 600; margin: 2px 0; white-space: nowrap; }
+.tool .cost { font-size: 11px; opacity: 0.85; }
+.tool .cost span { display: inline-block; margin: 0 2px; }
+#block-info { margin-top: 6px; font-size: 12px; opacity: 0.8; text-align: center; min-height: 16px; max-width: 700px; }
+#overlay { position: absolute; inset: 0; background: rgba(5, 7, 10, 0.72); display: flex; align-items: center; justify-content: center; pointer-events: auto; }
+#overlay.hidden { display: none; }
+#overlay-content { background: #131922; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 22px 28px; max-width: 620px; line-height: 1.5; font-size: 14px; }
+#overlay-content h1 { margin: 0 0 8px; font-size: 22px; }
+#overlay-content h2 { margin: 14px 0 4px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.7; }
+#overlay-content kbd { background: #222c3b; border: 1px solid rgba(255,255,255,0.15); border-radius: 3px; padding: 0 5px; font-family: inherit; font-size: 12px; }
+#overlay-content ul { margin: 4px 0; padding-left: 20px; }
+#overlay-content .cta { margin-top: 14px; opacity: 0.8; }

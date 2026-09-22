@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A-Industry — gameplay POC</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<div id="hud">
+  <div id="top-left" class="panel">
+    <div class="panel-title">Core storage</div>
+    <div id="resources"></div>
+  </div>
+
+  <div id="top-center" class="panel">
+    <div id="wave-text">Wave 1 in 60s</div>
+    <div class="bar"><div id="core-hp" class="bar-fill"></div></div>
+    <div id="wave-sub"></div>
+    <button id="skip-wave" title="Call the next wave immediately (N)">Next wave now (N)</button>
+  </div>
+
+  <div id="top-right" class="panel">
+    <div id="stats"></div>
+    <div class="hint">H help · P pause · wheel zoom</div>
+  </div>
+
+  <div id="bottom" class="panel">
+    <div id="toolbar"></div>
+    <div id="block-info">Pick a block (1–7), then click on the map. Right-click removes.</div>
+  </div>
+
+  <div id="overlay" class="hidden">
+    <div id="overlay-content"></div>
+  </div>
+</div>
+
+<script src="src/config.js"></script>
+<script src="src/util.js"></script>
+<script src="src/map.js"></script>
+<script src="src/buildings.js"></script>
+<script src="src/entities.js"></script>
+<script src="src/game.js"></script>
+<script src="src/render.js"></script>
+<script src="src/input.js"></script>
+<script src="src/ui.js"></script>
+<script src="src/main.js"></script>
+</body>
+</html>
