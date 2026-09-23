@@ -97,6 +97,7 @@ class UI {
         <li>Enemies walk in from the <b style="color:#ff7070">red spawn markers</b> and shoot whatever is closest. Keep the <b style="color:#ffd37f">core</b> alive.</li>
         <li><b>Drills</b> on ore → <b>conveyors</b> → core. Turrets need ammo: run a belt of copper into them.</li>
         <li><b>Smelter</b> turns 2 copper + 1 lead into alloy. Alloy unlocks the <b>Hail</b> artillery.</li>
+        <li>Build straight over a block to <b>replace</b> it (the old one is refunded). Placing a conveyor on a conveyor rotates it.</li>
       </ul>
       <h2>Controls</h2>
       ${this.input && this.input.touch ? `<ul>

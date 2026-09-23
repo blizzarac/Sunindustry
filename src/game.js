@@ -15,21 +15,40 @@ class Game {
   }
 
   // ----- building placement -------------------------------------------------
-  canPlace(type, x, y) {
+  // Placement rules. Existing blocks that fit entirely inside the new footprint are replaced (refunded),
+  // like building over a belt in Mindustry. Placing a conveyor on a conveyor only rotates it.
+  canPlace(type, x, y, rot = 0) {
     const def = BLOCKS[type];
     if (!def) return { ok: false, reason: 'unknown block' };
+    const replaced = new Set();
     for (let dy = 0; dy < def.size; dy++) for (let dx = 0; dx < def.size; dx++) {
       const tx = x + dx, ty = y + dy;
       if (!this.map.inBounds(tx, ty) || this.map.terrainAt(tx, ty) === T_WALL) return { ok: false, reason: 'blocked by rock' };
-      if (this.map.buildingAt(tx, ty)) return { ok: false, reason: 'occupied' };
+      const b = this.map.buildingAt(tx, ty);
+      if (!b) continue;
+      const fits = b.type !== 'core' && b.x >= x && b.y >= y && b.x + b.size <= x + def.size && b.y + b.size <= y + def.size;
+      if (!fits) return { ok: false, reason: 'occupied' };
+      replaced.add(b);
+    }
+    const same = replaced.size === 1 ? [...replaced][0] : null;
+    if (same && same.type === type && same.x === x && same.y === y) {
+      if (def.rotates && same.rot !== rot) return { ok: true, rotateOnly: same, replaced: [] };
+      return { ok: false, reason: 'already built' };
     }
     if (def.needsOre && !this.map.oreAt(x, y)) return { ok: false, reason: 'needs ore under it' };
     if (dist(x + def.size / 2, y + def.size / 2, this.player.x, this.player.y) > BUILD_RANGE) return { ok: false, reason: 'too far from your ship' };
-    for (const [k, v] of Object.entries(def.cost)) if ((this.core.inv[k] || 0) < v) return { ok: false, reason: `need ${v} ${ITEMS[k].name.toLowerCase()}` };
-    return { ok: true };
+    const refund = {};
+    for (const b of replaced) for (const [k, v] of Object.entries(b.def.cost)) refund[k] = (refund[k] || 0) + v;
+    for (const [k, v] of Object.entries(def.cost)) if ((this.core.inv[k] || 0) + (refund[k] || 0) < v) return { ok: false, reason: `need ${v} ${ITEMS[k].name.toLowerCase()}` };
+    return { ok: true, replaced: [...replaced] };
   }
   place(type, x, y, rot, free) {
-    if (!free) { const c = this.canPlace(type, x, y); if (!c.ok) return null; }
+    if (!free) {
+      const c = this.canPlace(type, x, y, rot);
+      if (!c.ok) return null;
+      if (c.rotateOnly) { c.rotateOnly.rot = rot; return c.rotateOnly; } // belt keeps its items
+      for (const b of c.replaced) { this.core.refund(b.def.cost); this.detach(b); }
+    }
     const b = new BLOCK_CLASSES[type](this, type, x, y, rot);
     if (!free) { this.core.pay(b.def.cost); this.stats.built++; }
     this.map.setBuilding(b); this.buildings.add(b); this.flowDirty = true;

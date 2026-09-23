@@ -207,8 +207,12 @@ class Renderer {
     ctx.strokeStyle = 'rgba(143,225,255,0.25)'; ctx.lineWidth = 2; ctx.setLineDash([8, 8]);
     ctx.beginPath(); ctx.arc(p.x * TILE, p.y * TILE, BUILD_RANGE * TILE, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
     const def = BLOCKS[type], tx = input.tileX, ty = input.tileY;
-    const check = game.canPlace(type, tx, ty);
+    const check = game.canPlace(type, tx, ty, input.rot);
     const px = tx * TILE, py = ty * TILE, s = def.size * TILE;
+    for (const b of check.replaced || []) { // blocks that will be swapped out (and refunded)
+      ctx.strokeStyle = '#ffb347'; ctx.lineWidth = 2; ctx.setLineDash([4, 3]);
+      ctx.strokeRect(b.x * TILE + 3, b.y * TILE + 3, b.size * TILE - 6, b.size * TILE - 6); ctx.setLineDash([]);
+    }
     ctx.globalAlpha = 0.55; ctx.fillStyle = check.ok ? def.color : '#ff5252'; ctx.fillRect(px + 2, py + 2, s - 4, s - 4); ctx.globalAlpha = 1;
     ctx.strokeStyle = check.ok ? '#8fff9f' : '#ff5252'; ctx.lineWidth = 2; ctx.strokeRect(px + 1, py + 1, s - 2, s - 2);
     if (def.rotates) {

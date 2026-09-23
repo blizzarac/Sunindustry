@@ -23,6 +23,8 @@ Query parameters: `?seed=123` for a reproducible map, `&nohelp` to skip the intr
 2. **Transport.** Conveyors carry items forward and feed whatever they point at. Routers split a line.
    Drag with the mouse to paint a belt that follows your cursor.
 3. **Bank.** Everything that reaches the core is added to storage. Building costs are paid from the core.
+   Build straight over an existing block to replace it: the old one is refunded. A conveyor placed on a
+   conveyor just rotates it and keeps its items, so dragging a new line across an old one re-routes it.
 4. **Defend.** Turrets need ammo delivered by belt: the Duo eats copper, the Hail eats alloy.
    Walls are cheap hit points. Your ship (WASD) auto-shoots and can only build within its range.
 5. **Escalate.** A smelter turns 2 copper + 1 lead into alloy, which unlocks the Hail artillery.

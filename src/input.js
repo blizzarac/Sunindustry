@@ -164,7 +164,7 @@ class Input {
     const game = this.getGame();
     if (this.selected === 'remove') { this.removeAt(this.tileX, this.tileY); return; }
     if (this.selected) {
-      const check = game.canPlace(this.selected, this.tileX, this.tileY);
+      const check = game.canPlace(this.selected, this.tileX, this.tileY, this.rot);
       if (check.ok) { this.placeAt(this.tileX, this.tileY); return; }
       if (check.reason === 'too far from your ship') this.moveTarget = [this.tileX + 0.5, this.tileY + 0.5]; // fly over, then tap again
       this.ui.flash(check.reason);
